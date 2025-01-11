@@ -1,23 +1,35 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Portfolio - Contact</title>
     <link rel="stylesheet" href="/static/css/style.css">
 </head>
 <body>
-    <h1>Contact Me</h1>
     <nav>
-        <a href="/">Home</a>
-        <a href="/projects">Projects</a>
-        <a href="/skills">Skills</a>
-        <a href="/contact">Contact</a>
+        <div class="nav-container">
+            <div class="nav-links">
+                <a href="/">Home</a>
+                <a href="/projects">Projects</a>
+                <a href="/skills">Skills</a>
+                <a href="/contact">Contact</a>
+            </div>
+        </div>
     </nav>
-    <p>Email: [your.email@example.com]</p>
-    <p>Phone: [Your Phone Number]</p>
-    <p>Social Media Links:</p>
-    <ul>
-        <li><a href="https://github.com/yourusername" target="_blank">GitHub</a></li>
-        <li><a href="https://linkedin.com/in/yourusername" target="_blank">LinkedIn</a></li>
-    </ul>
+
+    <main class="container">
+        <h1>Contact Me</h1>
+        <div class="contact-info">
+            <div class="card">
+                <p>Email: [your.email@example.com]</p>
+                <p>Phone: [Your Phone Number]</p>
+            </div>
+            <div class="social-links">
+                <a href="https://github.com/yourusername" target="_blank" class="social-link">GitHub</a>
+                <a href="https://linkedin.com/in/yourusername" target="_blank" class="social-link">LinkedIn</a>
+            </div>
+        </div>
+    </main>
 </body>
 </html>
