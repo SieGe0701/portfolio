@@ -28,8 +28,8 @@ body {
     max-width: 1200px;
     margin: 0 auto;
     padding: 2rem;
-    /* Add top padding to account for fixed nav */
-    padding-top: calc(4rem + 60px); /* 4rem for spacing + 60px for nav height */
+   
+    padding-top: calc(4rem + 60px);
     animation: fadeIn 0.5s ease-out;
 }
 
@@ -159,7 +159,6 @@ h2 {
 }
 
 /* Projects Section */
-/* Make the entire project card a clickable link */
 .project-card-link {
     text-decoration: none;
     color: inherit;
@@ -241,7 +240,6 @@ h2 {
     position: relative;
 }
 
-/* Optional: Add an underline effect to section titles */
 .section-title::after {
     content: '';
     position: absolute;
@@ -395,47 +393,34 @@ h2 {
 }
 
 /* Responsive Design */
-/* Mobile Navigation and Content Fixes */
 @media (max-width: 768px) {
-    /* Make nav static instead of fixed on mobile */
     nav {
         position: static;
         padding: 1rem;
     }
-    
-    /* Reset container padding since nav is no longer fixed */
     .container {
-        
         padding-top: 2rem;
     }
-    
-    /* Stack navigation items */
     .nav-container {
         flex-direction: row;
         gap: 1rem;
     }
-    
     .nav-links {
         flex-direction: row;
         width: 100%;
         gap: 0.5rem;
     }
-    
-    /* Make nav links full width on mobile */
     nav a {
         display: block;
         text-align: center;
         padding: 0.8rem;
         width: 100%;
     }
-    
-    /* Adjust hero section spacing */
     .hero {
         margin-top: 18rem;
         padding-top: 0;
-        min-height: calc(100vh - 60px); /* Subtract nav height */
+        min-height: calc(100vh - 60px);
     }
-    
     .hero-container {
         padding-top: 1rem;
     }
