@@ -196,7 +196,7 @@ h2 {
     opacity: 1;
 }
 
-/* Optional: Add an arrow indicator */
+
 .project-card::after {
     content: '→';
     position: absolute;
@@ -214,13 +214,14 @@ h2 {
 
 /* Skills Section */
 .skill-item {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    padding: 1rem;
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 8px;
+    background: var(--bg-card);
+    border-radius: 16px;
+    padding: 2rem;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
     transition: all 0.3s ease;
+    font-size: 20px;
 }
 
 .skill-item:hover {
