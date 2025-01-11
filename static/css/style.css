@@ -99,6 +99,7 @@ nav a:hover::after {
     justify-content: center;
     text-align: center;
     position: relative;
+    padding-top: 60px;
 }
 /* Hero section specific container (home page) */
 .hero-container {
@@ -394,16 +395,17 @@ h2 {
 }
 
 /* Responsive Design */
+/* Mobile Navigation and Content Fixes */
 @media (max-width: 768px) {
     /* Make nav static instead of fixed on mobile */
     nav {
         position: static;
         padding: 1rem;
-        display: flex;        
     }
     
     /* Reset container padding since nav is no longer fixed */
     .container {
+        
         padding-top: 2rem;
     }
     
@@ -429,10 +431,12 @@ h2 {
     
     /* Adjust hero section spacing */
     .hero {
-        padding-top: 2rem;
+        margin-top: 18rem;
+        padding-top: 0;
+        min-height: calc(100vh - 60px); /* Subtract nav height */
     }
     
     .hero-container {
-        padding-top:2rem;
+        padding-top: 1rem;
     }
 }
