@@ -228,7 +228,123 @@ h2 {
     background: rgba(0, 255, 204, 0.1);
     transform: translateX(10px);
 }
+/*About me section*/
+.section {
+    margin: 4rem 0;
+    animation: fadeIn 0.5s ease-out;
+}
 
+.section-title {
+    font-size: 2rem;
+    color: var(--primary);
+    margin-bottom: 2rem;
+    position: relative;
+}
+
+/* Optional: Add an underline effect to section titles */
+.section-title::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 0;
+    width: 60px;
+    height: 3px;
+    background: var(--primary);
+    border-radius: 2px;
+}
+
+/* Achievement Items Styling */
+.achievement-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    padding: 1rem;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.achievement-item:hover {
+    background: rgba(0, 255, 204, 0.05);
+    transform: translateX(10px);
+}
+
+.achievement-year {
+    color: var(--primary);
+    font-weight: bold;
+    min-width: 80px;
+    text-align: center;
+    padding: 0.5rem;
+    border-radius: 4px;
+    background: rgba(0, 255, 204, 0.1);
+}
+
+/* Hobbies & Interests Cards */
+.hobby-card {
+    background: var(--bg-card);
+    border-radius: 16px;
+    padding: 2rem;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    transition: all 0.3s ease;
+}
+
+.hobby-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 30px rgba(0, 255, 204, 0.1);
+}
+
+.hobby-card h3 {
+    color: var(--primary);
+    margin-bottom: 1rem;
+}
+
+.hobby-card ul {
+    list-style: none;
+    padding: 0;
+}
+
+.hobby-card li {
+    margin-bottom: 0.5rem;
+    padding-left: 1.5rem;
+    position: relative;
+}
+
+.hobby-card li::before {
+    content: '→';
+    position: absolute;
+    left: 0;
+    color: var(--primary);
+}
+
+/* Achievement Grid */
+.achievement-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    margin: 2rem 0;
+}
+
+.achievement-card {
+    background: var(--bg-card);
+    border-radius: 16px;
+    padding: 2rem;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    transition: all 0.3s ease;
+}
+
+.achievement-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 30px rgba(0, 255, 204, 0.1);
+}
+
+.achievement-card h3 {
+    color: var(--primary);
+    margin-bottom: 1.5rem;
+    font-size: 1.5rem;
+}
 /* Contact Section */
 .contact-info {
     text-align: center;
