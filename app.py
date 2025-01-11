@@ -10,9 +10,9 @@ def home():
 def projects():
     return render_template('projects.html')
 
-@app.route('/skills')
+@app.route('/Work_Experience')
 def skills():
-    return render_template('skills.html')
+    return render_template('Work_Experience.html')
 
 @app.route('/contact')
 def contact():

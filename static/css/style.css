@@ -158,29 +158,57 @@ h2 {
 }
 
 /* Projects Section */
+/* Make the entire project card a clickable link */
+.project-card-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+}
+
+/* Update project card hover state */
 .project-card {
     background: var(--bg-card);
     border-radius: 16px;
     padding: 2rem;
     position: relative;
     overflow: hidden;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 20px;
 }
 
-.project-card::before {
-    content: '';
+.project-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 30px rgba(0, 255, 204, 0.1);
+}
+
+/* GitHub icon and link indicator */
+.project-card .github-link {
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 4px;
-    background: linear-gradient(90deg, var(--primary), #80ffea);
-    transform: scaleX(0);
-    transform-origin: left;
-    transition: transform 0.3s ease;
+    top: 1rem;
+    right: 1rem;
+    opacity: 0.7;
+    transition: opacity 0.3s ease;
 }
 
-.project-card:hover::before {
-    transform: scaleX(1);
+.project-card:hover .github-link {
+    opacity: 1;
+}
+
+/* Optional: Add an arrow indicator */
+.project-card::after {
+    content: '→';
+    position: absolute;
+    bottom: 1rem;
+    right: 1rem;
+    font-size: 1.5rem;
+    opacity: 0;
+    transition: all 0.3s ease;
+}
+
+.project-card:hover::after {
+    opacity: 0.7;
+    transform: translateX(5px);
 }
 
 /* Skills Section */
