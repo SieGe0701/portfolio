@@ -397,11 +397,10 @@ h2 {
 }
 /* Mobile Navigation and Responsive Styles */
 @media (max-width: 768px) {
-    /* Reset container padding */
     .container {
-        padding: 4rem 1.5rem 2rem 1.5rem;
-        transition: margin-left 0.3s ease;
+        padding: 2rem;
     }
+
     .hero{
         margin-top: 16rem;
     }
@@ -538,5 +537,17 @@ h2 {
     .achievement-year {
         min-width: auto;
         width: 100%;
+    }
+    .social-links {
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 0.8rem;
+    }
+
+    .social-link {
+        width: calc(50% - 0.8rem); /* Two buttons per row with gap */
+        justify-content: center;
+        padding: 0.8rem;
     }
 }
