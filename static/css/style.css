@@ -28,8 +28,8 @@ body {
     max-width: 1200px;
     margin: 0 auto;
     padding: 2rem;
-    /* Add top padding to account for fixed nav */
-    padding-top: calc(4rem + 60px); /* 4rem for spacing + 60px for nav height */
+   
+    padding-top: calc(4rem + 60px);
     animation: fadeIn 0.5s ease-out;
 }
 
@@ -56,6 +56,10 @@ nav {
 .nav-links {
     display: flex;
     gap: 2rem;
+}
+
+.nav-toggle {
+    display: none;
 }
 
 nav a {
@@ -159,7 +163,6 @@ h2 {
 }
 
 /* Projects Section */
-/* Make the entire project card a clickable link */
 .project-card-link {
     text-decoration: none;
     color: inherit;
@@ -241,7 +244,6 @@ h2 {
     position: relative;
 }
 
-/* Optional: Add an underline effect to section titles */
 .section-title::after {
     content: '';
     position: absolute;
@@ -393,50 +395,144 @@ h2 {
     50% { background-position: 100% 50%; }
     100% { background-position: 0% 50%; }
 }
-
-/* Responsive Design */
-/* Mobile Navigation and Content Fixes */
+/* Mobile Navigation and Responsive Styles */
 @media (max-width: 768px) {
-    /* Make nav static instead of fixed on mobile */
-    nav {
-        position: static;
-        padding: 1rem;
-    }
-    
-    /* Reset container padding since nav is no longer fixed */
+    /* Reset container padding */
     .container {
-        
         padding-top: 2rem;
+        transition: margin-left 0.3s ease;
+    }
+
+    /* Nav Toggle Button */
+    .nav-toggle {
+        display: block;
+        position: fixed;
+        top: 1rem;
+        left: 1rem;
+        z-index: 1001;
+        background: var(--bg-card);
+        border: none;
+        border-radius: 8px;
+        padding: 0.8rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .nav-toggle:hover {
+        background: rgba(0, 255, 204, 0.1);
+    }
+
+    .nav-toggle span {
+        display: block;
+        width: 24px;
+        height: 2px;
+        background: var(--text-light);
+        margin: 5px 0;
+        transition: all 0.3s ease;
     }
     
-    /* Stack navigation items */
-    .nav-container {
-        flex-direction: row;
-        gap: 1rem;
+    .nav-toggle {
+        opacity: 1;
+        visibility: visible;
     }
-    
+    /* Side Navigation */
+    nav {
+        position: fixed;
+        top: 0;
+        left: -250px;
+        width: 250px;
+        height: 100vh;
+        background: var(--bg-dark);
+        padding: 4rem 1rem 1rem;
+        transition: all 0.3s ease;
+        overflow-y: auto;
+        z-index: 1000;
+        box-shadow: none;
+    }
+
+    nav.open {
+        left: 0;
+        box-shadow: 2px 0 10px rgba(0, 0, 0, 0.3);
+    }
+
+    .container.nav-open {
+        margin-left: 250px;
+    }
+
     .nav-links {
-        flex-direction: row;
+        flex-direction: column;
         width: 100%;
         gap: 0.5rem;
+        margin-top: 2rem;
     }
-    
-    /* Make nav links full width on mobile */
+
     nav a {
         display: block;
-        text-align: center;
-        padding: 0.8rem;
+        padding: 1rem;
+        text-align: left;
         width: 100%;
+        border-radius: 8px;
     }
-    
-    /* Adjust hero section spacing */
-    .hero {
-        margin-top: 18rem;
-        padding-top: 0;
-        min-height: calc(100vh - 60px); /* Subtract nav height */
+
+    nav a:hover {
+        background: rgba(0, 255, 204, 0.1);
+        transform: translateX(5px);
     }
-    
-    .hero-container {
-        padding-top: 1rem;
+
+    /* Overlay */
+    .nav-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 999;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+
+    .nav-overlay.open {
+        display: block;
+        opacity: 1;
+    }
+
+    /* Hamburger Animation */
+    .nav-toggle.open span:first-child {
+        transform: rotate(45deg) translate(5px, 5px);
+    }
+
+    .nav-toggle.open span:nth-child(2) {
+        opacity: 0;
+    }
+
+    .nav-toggle.open span:last-child {
+        transform: rotate(-45deg) translate(7px, -7px);
+    }
+
+    /* Typography Adjustments */
+    h1 {
+        font-size: 2.5rem;
+        margin-top: 1rem;
+        position: relative;
+        z-index: 1;
+    }
+
+    /* Grid Adjustments */
+    .grid {
+        grid-template-columns: 1fr;
+    }
+
+    /* Achievement Items Adjustments */
+    .achievement-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+
+    .achievement-year {
+        min-width: auto;
+        width: 100%;
     }
 }
