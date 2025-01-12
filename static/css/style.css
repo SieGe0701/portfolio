@@ -395,9 +395,13 @@ h2 {
     50% { background-position: 100% 50%; }
     100% { background-position: 0% 50%; }
 }
-/* Mobile Navigation and Responsive Styles */
+
+/* Responsive Design */
 @media (max-width: 768px) {
-    /* Reset container padding */
+    nav {
+        position: static;
+        padding: 1rem;
+    }
     .container {
         padding-top: 2rem;
         transition: margin-left 0.3s ease;
@@ -430,42 +434,20 @@ h2 {
         margin: 5px 0;
         transition: all 0.3s ease;
     }
-    
-    .nav-toggle {
-        opacity: 1;
-        visibility: visible;
+    .nav-container {
+        flex-direction: row;
+        gap: 1rem;
     }
-    /* Side Navigation */
-    nav {
-        position: fixed;
-        top: 0;
-        left: -250px;
-        width: 250px;
-        height: 100vh;
-        background: var(--bg-dark);
-        padding: 4rem 1rem 1rem;
-        transition: all 0.3s ease;
-        overflow-y: auto;
-        z-index: 1000;
-        box-shadow: none;
-    }
-
-    nav.open {
-        left: 0;
-        box-shadow: 2px 0 10px rgba(0, 0, 0, 0.3);
-    }
-
-    .container.nav-open {
-        margin-left: 250px;
-    }
-
     .nav-links {
         flex-direction: column;
         width: 100%;
         gap: 0.5rem;
         margin-top: 2rem;
     }
+<<<<<<< HEAD
 
+=======
+>>>>>>> 997c6c2c248243bc3c3936bbdb070ccbafd0fc86
     nav a {
         display: block;
         padding: 1rem;
@@ -534,5 +516,13 @@ h2 {
     .achievement-year {
         min-width: auto;
         width: 100%;
+    }
+    .hero {
+        margin-top: 18rem;
+        padding-top: 0;
+        min-height: calc(100vh - 60px);
+    }
+    .hero-container {
+        padding-top: 1rem;
     }
 }
