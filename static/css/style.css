@@ -491,7 +491,9 @@ h2 {
         opacity: 0;
         transition: opacity 0.3s ease;
     }
-
+    .hero-container{
+        margin-top: 10rem;
+    }
     .nav-overlay.open {
         display: block;
         opacity: 1;
@@ -513,7 +515,7 @@ h2 {
     /* Typography Adjustments */
     h1 {
         font-size: 2.5rem;
-        margin-top: 10rem;
+        margin-top: 2rem;
         position: relative;
         z-index: 1;
     }
