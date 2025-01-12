@@ -399,8 +399,14 @@ h2 {
 @media (max-width: 768px) {
     /* Reset container padding */
     .container {
-        padding-top: 2rem;
+        padding: 4rem 1.5rem 2rem 1.5rem;
         transition: margin-left 0.3s ease;
+    }
+    .hero{
+        margin-top: 16rem;
+    }
+    .hero-content{
+        justify-content: normal;
     }
 
     /* Nav Toggle Button */
@@ -490,9 +496,6 @@ h2 {
         z-index: 999;
         opacity: 0;
         transition: opacity 0.3s ease;
-    }
-    .hero-container{
-        margin-top: 10rem;
     }
     .nav-overlay.open {
         display: block;
