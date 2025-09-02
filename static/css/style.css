@@ -1,3 +1,26 @@
+/* Delete Button Style */
+.delete-btn {
+    background: linear-gradient(90deg, #e74c3c 60%, #c0392b 100%);
+    color: #fff;
+    border: none;
+    padding: 0.7rem 2.2rem;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s, box-shadow 0.2s, transform 0.2s;
+    margin-top: 0.5rem;
+    box-shadow: 0 2px 8px rgba(231,76,60,0.08);
+    letter-spacing: 0.5px;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+.delete-btn:hover {
+    background: linear-gradient(90deg, #c0392b 60%, #e74c3c 100%);
+    box-shadow: 0 4px 16px rgba(231,76,60,0.18);
+    transform: translateY(-2px) scale(1.04);
+}
 .login-btn {
     background: linear-gradient(90deg, #00ccaa 60%, #00ffcc 100%);
     color: #0a0a0a;
@@ -16,7 +39,6 @@
 .login-btn:hover {
     background: linear-gradient(90deg, #00ffcc 60%, #00ccaa 100%);
     color: #181818;
-    }
 }
 /* Login Page Styles */
 .login-card {
@@ -103,7 +125,6 @@
     background: linear-gradient(90deg, #00ffcc 60%, #00ccaa 100%);
     color: #181818;
     transform: translateY(-2px) scale(1.04);
-}
 /* Delete Button Style */
 .login-btn {
     background: linear-gradient(90deg, #00ccaa 60%, #00ffcc 100%);
