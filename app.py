@@ -28,8 +28,13 @@ def logout():
     session.pop('is_admin', None)
     return redirect(url_for('blog'))
 
+
 # --- Database Setup ---
-DB_PATH = os.path.join(os.path.dirname(__file__), 'blog.db')
+# Use /tmp for SQLite on Vercel (writable directory in serverless)
+if os.environ.get('VERCEL') == '1' or os.environ.get('VERCEL_ENV'):
+    DB_PATH = '/tmp/blog.db'
+else:
+    DB_PATH = os.path.join(os.path.dirname(__file__), 'blog.db')
 
 def init_db():
     with sqlite3.connect(DB_PATH) as conn:
