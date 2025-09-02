@@ -137,6 +137,11 @@ def contact():
 def about_me():
     return render_template('about_me.html')
 
-if __name__ == '__main__':
+
+# Always initialize DB before handling any request (for Vercel serverless)
+@app.before_request
+def before_request():
     init_db()
+
+if __name__ == '__main__':
     app.run()
