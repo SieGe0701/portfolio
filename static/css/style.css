@@ -1,3 +1,210 @@
+.login-btn {
+    background: linear-gradient(90deg, #00ccaa 60%, #00ffcc 100%);
+    color: #0a0a0a;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    box-shadow: 0 2px 8px rgba(0,255,204,0.10);
+    padding: 0.7rem 2.2rem;
+    margin-top: 0.5rem;
+    width: 100%;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s, transform 0.2s;
+}
+.login-btn:hover {
+    background: linear-gradient(90deg, #00ffcc 60%, #00ccaa 100%);
+    color: #181818;
+    }
+}
+/* Login Page Styles */
+.login-card {
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 2.5rem 2rem 2rem 2rem;
+    border-radius: 18px;
+    box-shadow: 0 8px 32px rgba(0,255,204,0.10), 0 1.5px 8px rgba(0,0,0,0.10);
+    background: rgba(26,26,26,0.98);
+    border: 1.5px solid rgba(0,255,204,0.08);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.2rem;
+}
+.login-title {
+    font-size: 2.2rem;
+    color: var(--primary);
+    margin-bottom: 1.5rem;
+    letter-spacing: 1px;
+    font-weight: 700;
+    text-align: center;
+}
+.login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+}
+.login-form label {
+    color: var(--primary);
+    font-weight: 500;
+    margin-bottom: 0.2rem;
+    display: block;
+    letter-spacing: 0.5px;
+}
+.login-form .input-field {
+    width: 100%;
+    padding: 0.7rem 1rem;
+    margin-bottom: 0.2rem;
+    border-radius: 8px;
+    border: 1px solid rgba(0,255,204,0.15);
+    background: #181818;
+    color: var(--text-light);
+    font-size: 1rem;
+    transition: border 0.2s;
+}
+.login-form .input-field:focus {
+    border: 1.5px solid var(--primary);
+    outline: none;
+}
+.login-btn {
+    width: 100%;
+    margin-top: 0.7rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+.login-error {
+    color: #e74c3c;
+    background: rgba(231,76,60,0.08);
+    border-radius: 6px;
+    padding: 0.7rem 1rem;
+    margin-bottom: 0.5rem;
+    width: 100%;
+    text-align: center;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+}
+/* Admin Auth Link Styling */
+.admin-auth-link {
+    display: inline-block;
+    margin-top: 2rem;
+    padding: 0.7rem 2.2rem;
+    background: linear-gradient(90deg, #00ccaa 60%, #00ffcc 100%);
+    color: #0a0a0a;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    text-decoration: none;
+    box-shadow: 0 2px 8px rgba(0,255,204,0.08);
+    transition: background 0.2s, color 0.2s, transform 0.2s;
+}
+.admin-auth-link:hover {
+    background: linear-gradient(90deg, #00ffcc 60%, #00ccaa 100%);
+    color: #181818;
+    transform: translateY(-2px) scale(1.04);
+}
+/* Delete Button Style */
+.login-btn {
+    background: linear-gradient(90deg, #00ccaa 60%, #00ffcc 100%);
+    color: #0a0a0a;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    box-shadow: 0 2px 8px rgba(0,255,204,0.10);
+    padding: 0.7rem 2.2rem;
+    margin-top: 0.5rem;
+    width: 100%;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s, transform 0.2s;
+}
+.login-btn:hover {
+    background: linear-gradient(90deg, #00ffcc 60%, #00ccaa 100%);
+    color: #181818;
+    transform: translateY(-2px) scale(1.04);
+}
+    transform: translateY(-2px) scale(1.04);
+}
+/* Blog Preview Link Styles */
+.blog-preview-link {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    margin-bottom: 1.5rem;
+    transition: box-shadow 0.3s, transform 0.3s, background 0.2s;
+}
+.blog-preview-link:hover {
+    background: rgba(0,255,204,0.05);
+    box-shadow: 0 8px 30px rgba(0,255,204,0.10);
+    transform: translateY(-3px) scale(1.02);
+}
+
+/* Blog Post Content Readability */
+.blog-post p {
+    font-size: 1.15rem;
+    line-height: 1.8;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    color: var(--text-light);
+    word-break: break-word;
+}
+/* Blog Page Styles */
+.blog-post {
+    margin-bottom: 2rem;
+    background: var(--bg-card);
+    border-radius: 16px;
+    padding: 2rem;
+    border: 1px solid rgba(0,255,204,0.05);
+    box-shadow: 0 4px 16px rgba(0,255,204,0.04);
+    transition: box-shadow 0.3s, transform 0.3s;
+}
+.blog-post:hover {
+    box-shadow: 0 8px 30px rgba(0,255,204,0.10);
+    transform: translateY(-3px);
+}
+.blog-date {
+    color: var(--text-dim);
+    font-size: 0.95rem;
+    margin-bottom: 1rem;
+}
+.blog-form label {
+    color: var(--primary);
+    font-weight: 500;
+    margin-top: 1rem;
+}
+.blog-form .input-field {
+    width: 100%;
+    padding: 0.7rem 1rem;
+    margin: 0.5rem 0 1rem 0;
+    border-radius: 8px;
+    border: 1px solid rgba(0,255,204,0.15);
+    background: #181818;
+    color: var(--text-light);
+    font-size: 1rem;
+    transition: border 0.2s;
+}
+.blog-form .input-field:focus {
+    border: 1.5px solid var(--primary);
+    outline: none;
+}
+.blog-form .btn-primary {
+    background: var(--primary);
+    color: var(--bg-dark);
+    border: none;
+    padding: 0.7rem 2rem;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+    margin-top: 0.5rem;
+}
+.blog-form .btn-primary:hover {
+    background: var(--primary-dark);
+    color: #fff;
+}
 /* Modern Reset and Base Styles */
 * {
     margin: 0;
@@ -97,8 +304,9 @@ nav a:hover::after {
 
 /* Hero Section */
 .hero {
-    height: 100vh;
     display: flex;
+    flex-direction: column;
+    height: 100vh;
     align-items: center;
     justify-content: center;
     text-align: center;

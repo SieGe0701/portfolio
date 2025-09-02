@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Blog</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <script src="/static/js/Side_nav.js"></script>
+    <button class="nav-toggle">
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
+    <nav>
+        <div class="nav-links">
+            <a href="/">Home</a>
+            <a href="about_me">About</a>
+            <a href="/projects">Projects</a>
+            <a href="/Work_Experience">Work Experience</a>
+            <a href="/contact">Contact</a>
+            <a href="/blog">Blog</a>
+        </div>
+    </nav>
+    <div class="nav-overlay"></div>
+    <main class="container">
+        <h1>Blog</h1>
+        <div class="grid">
+            {% for post in posts %}
+                <a href="/blog/{{ post.id }}" class="card blog-preview-link">
+                    <h2>{{ post.title }}</h2>
+                    <p class="blog-date"><em>{{ post.date }}</em></p>
+                    <p>{{ post.preview }}</p>
+                </a>
+            {% else %}
+                <p>No blog posts yet.</p>
+            {% endfor %}
+        </div>
+        {% if session.is_admin %}
+        <div class="card" style="margin-top:2rem;">
+            <h2>Add a New Post</h2>
+            <form method="post" action="/blog" class="blog-form">
+                <label for="title">Title:</label><br>
+                <input type="text" id="title" name="title" required class="input-field"><br>
+                <label for="content">Content:</label><br>
+                <textarea id="content" name="content" rows="4" cols="50" required class="input-field"></textarea><br>
+                <input type="submit" value="Add Post" class="btn-primary">
+            </form>
+        </div>
+        {% endif %}
+        <div style="margin:3rem auto 0 auto; text-align:center;">
+            {% if session.is_admin %}
+                <a href="/logout" class="admin-auth-link">Logout (Admin)</a>
+            {% else %}
+                <a href="/login" class="admin-auth-link">Admin Login</a>
+            {% endif %}
+        </div>
+    </main>
+</body>
+</html>

@@ -1,6 +1,116 @@
-from flask import Flask, render_template
+
+from flask import Flask, render_template, request, redirect, url_for, session
+import uuid
+import sqlite3
+import os
 
 app = Flask(__name__)
+app.secret_key = 'change_this_secret_key'  # Needed for session
+# Simple login for blog admin (for delete button visibility)
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if session.get('is_admin'):
+        return redirect(url_for('blog'))
+    error = None
+    if request.method == 'POST':
+        username = request.form.get('username')
+        password = request.form.get('password')
+        # Only allow admin login, no registration or public login
+        if username == 'admin' and password == 'blogpass':
+            session['is_admin'] = True
+            return redirect(url_for('blog'))
+        else:
+            error = 'Invalid credentials.'
+    return render_template('login.html', error=error)
+
+@app.route('/logout')
+def logout():
+    session.pop('is_admin', None)
+    return redirect(url_for('blog'))
+
+# --- Database Setup ---
+DB_PATH = os.path.join(os.path.dirname(__file__), 'blog.db')
+
+def init_db():
+    with sqlite3.connect(DB_PATH) as conn:
+        c = conn.cursor()
+        c.execute('''CREATE TABLE IF NOT EXISTS blog_posts (
+            id TEXT PRIMARY KEY,
+            title TEXT NOT NULL,
+            content TEXT NOT NULL,
+            date TEXT NOT NULL
+        )''')
+        conn.commit()
+
+def get_all_posts():
+    with sqlite3.connect(DB_PATH) as conn:
+        c = conn.cursor()
+        c.execute('SELECT id, title, content, date FROM blog_posts ORDER BY date DESC')
+        rows = c.fetchall()
+        return [
+            {'id': row[0], 'title': row[1], 'content': row[2], 'date': row[3]}
+            for row in rows
+        ]
+
+def get_post(post_id):
+    with sqlite3.connect(DB_PATH) as conn:
+        c = conn.cursor()
+        c.execute('SELECT id, title, content, date FROM blog_posts WHERE id = ?', (post_id,))
+        row = c.fetchone()
+        if row:
+            return {'id': row[0], 'title': row[1], 'content': row[2], 'date': row[3]}
+        return None
+
+def add_post(title, content, date):
+    post_id = str(uuid.uuid4())
+    with sqlite3.connect(DB_PATH) as conn:
+        c = conn.cursor()
+        c.execute('INSERT INTO blog_posts (id, title, content, date) VALUES (?, ?, ?, ?)',
+                  (post_id, title, content, date))
+        conn.commit()
+    return post_id
+
+def delete_post(post_id):
+    with sqlite3.connect(DB_PATH) as conn:
+        c = conn.cursor()
+        c.execute('DELETE FROM blog_posts WHERE id = ?', (post_id,))
+        conn.commit()
+
+
+# Blog list and add post
+@app.route('/blog', methods=['GET', 'POST'])
+def blog():
+    if request.method == 'POST':
+        title = request.form.get('title')
+        content = request.form.get('content')
+        from datetime import datetime
+        if title and content:
+            add_post(title, content, datetime.now().strftime('%Y-%m-%d %H:%M'))
+        return redirect(url_for('blog'))
+    posts = get_all_posts()
+    previews = [
+        {
+            'id': post['id'],
+            'title': post['title'],
+            'date': post['date'],
+            'preview': post['content'][:200] + ('...' if len(post['content']) > 200 else '')
+        }
+        for post in posts
+    ]
+    return render_template('blog_list.html', posts=previews)
+
+
+# Individual blog post view and delete
+@app.route('/blog/<post_id>', methods=['GET', 'POST'])
+def blog_post(post_id):
+    post = get_post(post_id)
+    if not post:
+        return render_template('blog_post.html', post=None), 404
+    if request.method == 'POST' and request.form.get('delete') == '1':
+        delete_post(post_id)
+        return redirect(url_for('blog'))
+    is_admin = session.get('is_admin', False)
+    return render_template('blog_post.html', post=post, is_admin=is_admin)
 
 @app.route('/')
 def home():
@@ -23,4 +133,5 @@ def about_me():
     return render_template('about_me.html')
 
 if __name__ == '__main__':
+    init_db()
     app.run()
