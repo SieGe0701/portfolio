@@ -5,7 +5,6 @@ import sqlite3
 from werkzeug.security import generate_password_hash, check_password_hash
 import os
 
-from dotenv import load_dotenv
 
 
 app = Flask(__name__)
@@ -70,7 +69,6 @@ def init_db():
         # Add a default admin if none exist, using environment variables if set
         c.execute('SELECT COUNT(*) FROM admins')
         if c.fetchone()[0] == 0:
-            load_dotenv()
             default_admin = os.environ.get('DEFAULT_ADMIN_USERNAME')
             default_pass = os.environ.get('DEFAULT_ADMIN_PASSWORD')
             if default_admin and default_pass:
