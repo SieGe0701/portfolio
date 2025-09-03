@@ -25,7 +25,21 @@ def get_db():
     # Remove quotes if present (for compatibility with .env syntax)
     if db_url.startswith('"') and db_url.endswith('"'):
         db_url = db_url[1:-1]
-    return psycopg2.connect(db_url, cursor_factory=RealDictCursor)
+        db_url = os.environ.get("CON_STRING") or os.environ.get("SUPABASE_DB_URL") or os.environ.get("POSTGRES_URL")
+        if not db_url:
+            raise RuntimeError("CON_STRING, SUPABASE_DB_URL, or POSTGRES_URL environment variable not set. Please check your .env file.")
+        # Remove quotes if present (for compatibility with .env syntax)
+        if db_url.startswith('"') and db_url.endswith('"'):
+            db_url = db_url[1:-1]
+        # Remove 'supa' query param if present
+        import re
+        if 'supa=' in db_url:
+            # Remove supa=... from query string
+            db_url = re.sub(r'([&?])supa=[^&]*&?', lambda m: m.group(1) if m.group(0).endswith('&') else '', db_url)
+            # Clean up any trailing ? or &
+            db_url = re.sub(r'[?&]$', '', db_url)
+            db_url = db_url.replace('?&', '?')
+        return psycopg2.connect(db_url, cursor_factory=RealDictCursor)
 
 def add_admin(username, password):
     password_hash = generate_password_hash(password)
