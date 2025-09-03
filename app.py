@@ -2,8 +2,7 @@
 from flask import Flask, render_template, request, redirect, url_for, session
 import uuid
 
-import psycopg2
-from psycopg2.extras import RealDictCursor
+from supabase import create_client, Client
 from werkzeug.security import generate_password_hash, check_password_hash
 import os
 
@@ -18,35 +17,20 @@ app.secret_key = 'change_this_secret_key'  # Needed for session
 
 
 # Multi-admin login for blog admin (for delete button visibility)
-def get_db():
-    db_url = os.environ.get("SUPABASE_DB_URL") or os.environ.get("POSTGRES_URL")
-    if not db_url:
-        raise RuntimeError("SUPABASE_DB_URL or POSTGRES_URL environment variable not set. Please check your .env file.")
-    # Remove quotes if present (for compatibility with .env syntax)
-    if db_url.startswith('"') and db_url.endswith('"'):
-        db_url = db_url[1:-1]
-        db_url = os.environ.get("CON_STRING") or os.environ.get("SUPABASE_DB_URL") or os.environ.get("POSTGRES_URL")
-        if not db_url:
-            raise RuntimeError("CON_STRING, SUPABASE_DB_URL, or POSTGRES_URL environment variable not set. Please check your .env file.")
-        # Remove quotes if present (for compatibility with .env syntax)
-        if db_url.startswith('"') and db_url.endswith('"'):
-            db_url = db_url[1:-1]
-        # Remove 'supa' query param if present
-        import re
-        if 'supa=' in db_url:
-            # Remove supa=... from query string
-            db_url = re.sub(r'([&?])supa=[^&]*&?', lambda m: m.group(1) if m.group(0).endswith('&') else '', db_url)
-            # Clean up any trailing ? or &
-            db_url = re.sub(r'[?&]$', '', db_url)
-            db_url = db_url.replace('?&', '?')
-        return psycopg2.connect(db_url, cursor_factory=RealDictCursor)
+
+# Supabase client setup
+SUPABASE_URL = os.environ.get("SUPABASE_URL")
+SUPABASE_KEY = os.environ.get("SUPABASE_SERVICE_ROLE_KEY") or os.environ.get("SUPABASE_ANON_KEY")
+if not SUPABASE_URL or not SUPABASE_KEY:
+    raise RuntimeError("SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY or SUPABASE_ANON_KEY must be set in .env")
+supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 def add_admin(username, password):
     password_hash = generate_password_hash(password)
-    with get_db() as conn:
-        with conn.cursor() as c:
-            c.execute('INSERT INTO admins (username, password) VALUES (%s, %s) ON CONFLICT (username) DO NOTHING', (username, password_hash))
-        conn.commit()
+    # Insert admin if not exists
+    existing = supabase.table("admins").select("username").eq("username", username).execute()
+    if not existing.data:
+        supabase.table("admins").insert({"username": username, "password": password_hash}).execute()
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -56,10 +40,8 @@ def login():
     if request.method == 'POST':
         username = request.form.get('username')
         password = request.form.get('password')
-        with get_db() as conn:
-            with conn.cursor() as c:
-                c.execute('SELECT password FROM admins WHERE username = %s', (username,))
-                row = c.fetchone()
+        res = supabase.table("admins").select("password").eq("username", username).single().execute()
+        row = res.data if res.data else None
         if row and check_password_hash(row['password'], password):
             session['is_admin'] = True
             session['admin_user'] = username
@@ -87,38 +69,27 @@ else:
 # Remove init_db, assume tables are created in Supabase
 
 def get_all_posts():
-    with get_db() as conn:
-        with conn.cursor() as c:
-            c.execute('SELECT id, title, content, date FROM blog_posts ORDER BY date DESC')
-            rows = c.fetchall()
-            return [
-                {'id': row['id'], 'title': row['title'], 'content': row['content'], 'date': row['date']}
-                for row in rows
-            ]
+    res = supabase.table("blog_posts").select("id, title, content, date").order("date", desc=True).execute()
+    rows = res.data if res.data else []
+    return [
+        {'id': row['id'], 'title': row['title'], 'content': row['content'], 'date': row['date']}
+        for row in rows
+    ]
 
 def get_post(post_id):
-    with get_db() as conn:
-        with conn.cursor() as c:
-            c.execute('SELECT id, title, content, date FROM blog_posts WHERE id = %s', (post_id,))
-            row = c.fetchone()
-            if row:
-                return {'id': row['id'], 'title': row['title'], 'content': row['content'], 'date': row['date']}
-            return None
+    res = supabase.table("blog_posts").select("id, title, content, date").eq("id", post_id).single().execute()
+    row = res.data if res.data else None
+    if row:
+        return {'id': row['id'], 'title': row['title'], 'content': row['content'], 'date': row['date']}
+    return None
 
 def add_post(title, content, date):
     post_id = str(uuid.uuid4())
-    with get_db() as conn:
-        with conn.cursor() as c:
-            c.execute('INSERT INTO blog_posts (id, title, content, date) VALUES (%s, %s, %s, %s)',
-                      (post_id, title, content, date))
-        conn.commit()
+    supabase.table("blog_posts").insert({"id": post_id, "title": title, "content": content, "date": date}).execute()
     return post_id
 
 def delete_post(post_id):
-    with get_db() as conn:
-        with conn.cursor() as c:
-            c.execute('DELETE FROM blog_posts WHERE id = %s', (post_id,))
-        conn.commit()
+    supabase.table("blog_posts").delete().eq("id", post_id).execute()
 
 
 # Blog list and add post
@@ -134,14 +105,12 @@ def blog():
             if not new_username or not new_password:
                 error = 'Username and password required to add admin.'
             else:
-                with get_db() as conn:
-                    with conn.cursor() as c:
-                        c.execute('SELECT * FROM admins WHERE username = %s', (new_username,))
-                        if c.fetchone():
-                            error = 'Admin already exists.'
-                        else:
-                            add_admin(new_username, new_password)
-                            success = f'Admin {new_username} added.'
+                existing = supabase.table("admins").select("username").eq("username", new_username).execute()
+                if existing.data:
+                    error = 'Admin already exists.'
+                else:
+                    add_admin(new_username, new_password)
+                    success = f'Admin {new_username} added.'
         elif request.form.get('title') and request.form.get('content'):
             title = request.form.get('title')
             content = request.form.get('content')
