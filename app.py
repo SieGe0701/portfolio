@@ -1,21 +1,37 @@
 
 from flask import Flask, render_template, request, redirect, url_for, session
 import uuid
-import sqlite3
+
+import psycopg2
+from psycopg2.extras import RealDictCursor
 from werkzeug.security import generate_password_hash, check_password_hash
 import os
 
 
 
+
+from dotenv import load_dotenv
+load_dotenv()
+
 app = Flask(__name__)
 app.secret_key = 'change_this_secret_key'  # Needed for session
 
+
 # Multi-admin login for blog admin (for delete button visibility)
+def get_db():
+    db_url = os.environ.get("SUPABASE_DB_URL") or os.environ.get("POSTGRES_URL")
+    if not db_url:
+        raise RuntimeError("SUPABASE_DB_URL or POSTGRES_URL environment variable not set. Please check your .env file.")
+    # Remove quotes if present (for compatibility with .env syntax)
+    if db_url.startswith('"') and db_url.endswith('"'):
+        db_url = db_url[1:-1]
+    return psycopg2.connect(db_url, cursor_factory=RealDictCursor)
+
 def add_admin(username, password):
     password_hash = generate_password_hash(password)
-    with sqlite3.connect(DB_PATH) as conn:
-        c = conn.cursor()
-        c.execute('INSERT OR IGNORE INTO admins (username, password) VALUES (?, ?)', (username, password_hash))
+    with get_db() as conn:
+        with conn.cursor() as c:
+            c.execute('INSERT INTO admins (username, password) VALUES (%s, %s) ON CONFLICT (username) DO NOTHING', (username, password_hash))
         conn.commit()
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -26,11 +42,11 @@ def login():
     if request.method == 'POST':
         username = request.form.get('username')
         password = request.form.get('password')
-        with sqlite3.connect(DB_PATH) as conn:
-            c = conn.cursor()
-            c.execute('SELECT password FROM admins WHERE username = ?', (username,))
-            row = c.fetchone()
-        if row and check_password_hash(row[0], password):
+        with get_db() as conn:
+            with conn.cursor() as c:
+                c.execute('SELECT password FROM admins WHERE username = %s', (username,))
+                row = c.fetchone()
+        if row and check_password_hash(row['password'], password):
             session['is_admin'] = True
             session['admin_user'] = username
             return redirect(url_for('blog'))
@@ -53,61 +69,41 @@ if os.environ.get('VERCEL') == '1' or os.environ.get('VERCEL_ENV'):
 else:
     DB_PATH = os.path.join(os.path.dirname(__file__), 'blog.db')
 
-def init_db():
-    with sqlite3.connect(DB_PATH) as conn:
-        c = conn.cursor()
-        c.execute('''CREATE TABLE IF NOT EXISTS blog_posts (
-            id TEXT PRIMARY KEY,
-            title TEXT NOT NULL,
-            content TEXT NOT NULL,
-            date TEXT NOT NULL
-        )''')
-        c.execute('''CREATE TABLE IF NOT EXISTS admins (
-            username TEXT PRIMARY KEY,
-            password TEXT NOT NULL
-        )''')
-        # Add a default admin if none exist, using environment variables if set
-        c.execute('SELECT COUNT(*) FROM admins')
-        if c.fetchone()[0] == 0:
-            default_admin = os.environ.get('DEFAULT_ADMIN_USERNAME')
-            default_pass = os.environ.get('DEFAULT_ADMIN_PASSWORD')
-            if default_admin and default_pass:
-                from werkzeug.security import generate_password_hash
-                c.execute('INSERT INTO admins (username, password) VALUES (?, ?)', (default_admin, generate_password_hash(default_pass)))
-        conn.commit()
+
+# Remove init_db, assume tables are created in Supabase
 
 def get_all_posts():
-    with sqlite3.connect(DB_PATH) as conn:
-        c = conn.cursor()
-        c.execute('SELECT id, title, content, date FROM blog_posts ORDER BY date DESC')
-        rows = c.fetchall()
-        return [
-            {'id': row[0], 'title': row[1], 'content': row[2], 'date': row[3]}
-            for row in rows
-        ]
+    with get_db() as conn:
+        with conn.cursor() as c:
+            c.execute('SELECT id, title, content, date FROM blog_posts ORDER BY date DESC')
+            rows = c.fetchall()
+            return [
+                {'id': row['id'], 'title': row['title'], 'content': row['content'], 'date': row['date']}
+                for row in rows
+            ]
 
 def get_post(post_id):
-    with sqlite3.connect(DB_PATH) as conn:
-        c = conn.cursor()
-        c.execute('SELECT id, title, content, date FROM blog_posts WHERE id = ?', (post_id,))
-        row = c.fetchone()
-        if row:
-            return {'id': row[0], 'title': row[1], 'content': row[2], 'date': row[3]}
-        return None
+    with get_db() as conn:
+        with conn.cursor() as c:
+            c.execute('SELECT id, title, content, date FROM blog_posts WHERE id = %s', (post_id,))
+            row = c.fetchone()
+            if row:
+                return {'id': row['id'], 'title': row['title'], 'content': row['content'], 'date': row['date']}
+            return None
 
 def add_post(title, content, date):
     post_id = str(uuid.uuid4())
-    with sqlite3.connect(DB_PATH) as conn:
-        c = conn.cursor()
-        c.execute('INSERT INTO blog_posts (id, title, content, date) VALUES (?, ?, ?, ?)',
-                  (post_id, title, content, date))
+    with get_db() as conn:
+        with conn.cursor() as c:
+            c.execute('INSERT INTO blog_posts (id, title, content, date) VALUES (%s, %s, %s, %s)',
+                      (post_id, title, content, date))
         conn.commit()
     return post_id
 
 def delete_post(post_id):
-    with sqlite3.connect(DB_PATH) as conn:
-        c = conn.cursor()
-        c.execute('DELETE FROM blog_posts WHERE id = ?', (post_id,))
+    with get_db() as conn:
+        with conn.cursor() as c:
+            c.execute('DELETE FROM blog_posts WHERE id = %s', (post_id,))
         conn.commit()
 
 
@@ -124,14 +120,14 @@ def blog():
             if not new_username or not new_password:
                 error = 'Username and password required to add admin.'
             else:
-                with sqlite3.connect(DB_PATH) as conn:
-                    c = conn.cursor()
-                    c.execute('SELECT * FROM admins WHERE username = ?', (new_username,))
-                    if c.fetchone():
-                        error = 'Admin already exists.'
-                    else:
-                        add_admin(new_username, new_password)
-                        success = f'Admin {new_username} added.'
+                with get_db() as conn:
+                    with conn.cursor() as c:
+                        c.execute('SELECT * FROM admins WHERE username = %s', (new_username,))
+                        if c.fetchone():
+                            error = 'Admin already exists.'
+                        else:
+                            add_admin(new_username, new_password)
+                            success = f'Admin {new_username} added.'
         elif request.form.get('title') and request.form.get('content'):
             title = request.form.get('title')
             content = request.form.get('content')
@@ -183,10 +179,8 @@ def about_me():
     return render_template('about_me.html')
 
 
-# Always initialize DB before handling any request (for Vercel serverless)
-@app.before_request
-def before_request():
-    init_db()
+
+# No DB init needed for Supabase/Postgres
 
 if __name__ == '__main__':
     app.run()
