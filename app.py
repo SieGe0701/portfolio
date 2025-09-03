@@ -2,11 +2,23 @@
 from flask import Flask, render_template, request, redirect, url_for, session
 import uuid
 import sqlite3
+from werkzeug.security import generate_password_hash, check_password_hash
 import os
+
+from dotenv import load_dotenv
+
 
 app = Flask(__name__)
 app.secret_key = 'change_this_secret_key'  # Needed for session
-# Simple login for blog admin (for delete button visibility)
+
+# Multi-admin login for blog admin (for delete button visibility)
+def add_admin(username, password):
+    password_hash = generate_password_hash(password)
+    with sqlite3.connect(DB_PATH) as conn:
+        c = conn.cursor()
+        c.execute('INSERT OR IGNORE INTO admins (username, password) VALUES (?, ?)', (username, password_hash))
+        conn.commit()
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if session.get('is_admin'):
@@ -15,17 +27,23 @@ def login():
     if request.method == 'POST':
         username = request.form.get('username')
         password = request.form.get('password')
-        # Only allow admin login, no registration or public login
-        if username == 'admin' and password == 'blogpass':
+        with sqlite3.connect(DB_PATH) as conn:
+            c = conn.cursor()
+            c.execute('SELECT password FROM admins WHERE username = ?', (username,))
+            row = c.fetchone()
+        if row and check_password_hash(row[0], password):
             session['is_admin'] = True
+            session['admin_user'] = username
             return redirect(url_for('blog'))
         else:
             error = 'Invalid credentials.'
     return render_template('login.html', error=error)
 
+
 @app.route('/logout')
 def logout():
     session.pop('is_admin', None)
+    session.pop('admin_user', None)
     return redirect(url_for('blog'))
 
 
@@ -45,6 +63,19 @@ def init_db():
             content TEXT NOT NULL,
             date TEXT NOT NULL
         )''')
+        c.execute('''CREATE TABLE IF NOT EXISTS admins (
+            username TEXT PRIMARY KEY,
+            password TEXT NOT NULL
+        )''')
+        # Add a default admin if none exist, using environment variables if set
+        c.execute('SELECT COUNT(*) FROM admins')
+        if c.fetchone()[0] == 0:
+            load_dotenv()
+            default_admin = os.environ.get('DEFAULT_ADMIN_USERNAME')
+            default_pass = os.environ.get('DEFAULT_ADMIN_PASSWORD')
+            if default_admin and default_pass:
+                from werkzeug.security import generate_password_hash
+                c.execute('INSERT INTO admins (username, password) VALUES (?, ?)', (default_admin, generate_password_hash(default_pass)))
         conn.commit()
 
 def get_all_posts():
@@ -85,13 +116,29 @@ def delete_post(post_id):
 # Blog list and add post
 @app.route('/blog', methods=['GET', 'POST'])
 def blog():
+    from datetime import datetime
+    error = None
+    success = None
     if request.method == 'POST':
-        title = request.form.get('title')
-        content = request.form.get('content')
-        from datetime import datetime
-        if title and content:
+        if session.get('is_admin') and request.form.get('action') == 'add_admin':
+            new_username = request.form.get('new_username')
+            new_password = request.form.get('new_password')
+            if not new_username or not new_password:
+                error = 'Username and password required to add admin.'
+            else:
+                with sqlite3.connect(DB_PATH) as conn:
+                    c = conn.cursor()
+                    c.execute('SELECT * FROM admins WHERE username = ?', (new_username,))
+                    if c.fetchone():
+                        error = 'Admin already exists.'
+                    else:
+                        add_admin(new_username, new_password)
+                        success = f'Admin {new_username} added.'
+        elif request.form.get('title') and request.form.get('content'):
+            title = request.form.get('title')
+            content = request.form.get('content')
             add_post(title, content, datetime.now().strftime('%Y-%m-%d %H:%M'))
-        return redirect(url_for('blog'))
+            return redirect(url_for('blog'))
     posts = get_all_posts()
     previews = [
         {
@@ -102,7 +149,7 @@ def blog():
         }
         for post in posts
     ]
-    return render_template('blog_list.html', posts=previews)
+    return render_template('blog_list.html', posts=previews, error=error, success=success)
 
 
 # Individual blog post view and delete

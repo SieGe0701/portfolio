@@ -49,13 +49,40 @@
             </form>
         </div>
         {% endif %}
-        <div style="margin:3rem auto 0 auto; text-align:center;">
+        <div style="margin:3rem auto 0 auto; text-align:center; display:flex; flex-direction:row; justify-content:center; gap:1rem; align-items:center;">
             {% if session.is_admin %}
                 <a href="/logout" class="admin-auth-link">Logout (Admin)</a>
+                <button onclick="document.getElementById('add-admin-modal').style.display='block'" class="admin-auth-link add-admin-btn">Add Admin</button>
             {% else %}
                 <a href="/login" class="admin-auth-link">Admin Login</a>
             {% endif %}
         </div>
+
+        {% if session.is_admin %}
+        <div id="add-admin-modal" class="add-admin-modal" style="display:none;">
+            <div class="card">
+                <button onclick="document.getElementById('add-admin-modal').style.display='none'" class="close-btn">&times;</button>
+                <h3 style="margin-bottom:1rem;">Add New Admin</h3>
+                {% if error %}<div class="login-error">{{ error }}</div>{% endif %}
+                {% if success %}<div class="login-success">{{ success }}</div>{% endif %}
+                <form method="post" class="add-admin-form" autocomplete="off">
+                    <input type="hidden" name="action" value="add_admin">
+                    <input type="text" name="new_username" placeholder="New Admin Username" class="input-field" required>
+                    <input type="password" name="new_password" placeholder="New Admin Password" class="input-field" required>
+                    <button type="submit" class="btn-primary">Add Admin</button>
+                </form>
+            </div>
+        </div>
+        <script>
+        // Hide modal on outside click
+        window.onclick = function(event) {
+            var modal = document.getElementById('add-admin-modal');
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        }
+        </script>
+        {% endif %}
     </main>
 </body>
 </html>

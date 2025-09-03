@@ -1,2 +1,7 @@
 venv/
 blog.db
+
+# Python/Vercel best practices
+__pycache__/
+.env
+.DS_Store
