@@ -1,4 +1,8 @@
 /* Edit Button Style */
+.edit-btn, .delete-btn {
+    min-width: 160px;
+    text-align: center;
+}
 .edit-btn {
     background: linear-gradient(90deg, var(--primary) 60%, var(--primary-dark) 100%);
     color: #0a0a0a;
