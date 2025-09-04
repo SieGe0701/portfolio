@@ -132,14 +132,26 @@ def blog_post(post_id):
     post = get_post(post_id)
     if not post:
         return render_template('blog_post.html', post=None), 404
-    if request.method == 'POST' and request.form.get('delete') == '1':
-        delete_post(post_id)
-        return redirect(url_for('blog'))
     is_admin = session.get('is_admin', False)
+    edit_mode = False
+    if request.method == 'POST':
+        if request.form.get('delete') == '1':
+            delete_post(post_id)
+            return redirect(url_for('blog'))
+        elif is_admin and request.form.get('edit') == '1':
+            # Enter edit mode
+            edit_mode = True
+        elif is_admin and request.form.get('save_edit') == '1':
+            new_title = request.form.get('title')
+            new_content = request.form.get('content')
+            if new_title and new_content:
+                supabase.table("blog_posts").update({"title": new_title, "content": new_content}).eq("id", post_id).execute()
+                post = get_post(post_id)  # Refresh post
+            edit_mode = False
     # Render markdown to HTML for the post content
     if post:
         post['content_html'] = Markup(markdown.markdown(post['content'], extensions=['extra', 'codehilite']))
-    return render_template('blog_post.html', post=post, is_admin=is_admin)
+    return render_template('blog_post.html', post=post, is_admin=is_admin, edit_mode=edit_mode)
 
 @app.route('/')
 def home():
