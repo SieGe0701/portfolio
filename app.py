@@ -1,5 +1,6 @@
 
-from flask import Flask, render_template, request, redirect, url_for, session
+from flask import Flask, render_template, request, redirect, url_for, session, Markup
+import markdown
 import uuid
 
 from supabase import create_client, Client
@@ -112,12 +113,13 @@ def blog():
             add_post(title, content, datetime.now().strftime('%Y-%m-%d %H:%M'))
             return redirect(url_for('blog'))
     posts = get_all_posts()
+    import html
     previews = [
         {
             'id': post['id'],
             'title': post['title'],
             'date': post['date'],
-            'preview': post['content'][:200] + ('...' if len(post['content']) > 200 else '')
+            'preview': html.escape(post['content'][:200]) + ('...' if len(post['content']) > 200 else '')
         }
         for post in posts
     ]
@@ -134,6 +136,9 @@ def blog_post(post_id):
         delete_post(post_id)
         return redirect(url_for('blog'))
     is_admin = session.get('is_admin', False)
+    # Render markdown to HTML for the post content
+    if post:
+        post['content_html'] = Markup(markdown.markdown(post['content'], extensions=['extra', 'codehilite']))
     return render_template('blog_post.html', post=post, is_admin=is_admin)
 
 @app.route('/')
