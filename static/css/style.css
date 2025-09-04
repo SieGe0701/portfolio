@@ -1,3 +1,26 @@
+/* Edit Button Style */
+.edit-btn {
+    background: linear-gradient(90deg, var(--primary) 60%, var(--primary-dark) 100%);
+    color: #0a0a0a;
+    border: none;
+    padding: 0.7rem 2.2rem;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s, box-shadow 0.2s, transform 0.2s;
+    margin-top: 0.5rem;
+    box-shadow: 0 2px 8px rgba(0,255,204,0.08);
+    letter-spacing: 0.5px;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+.edit-btn:hover {
+    background: linear-gradient(90deg, var(--primary-dark) 60%, var(--primary) 100%);
+    color: #181818;
+    transform: translateY(-2px) scale(1.04);
+}
 /* Add Admin Button (Blog Page) */
 .add-admin-btn {
     background: linear-gradient(90deg, var(--primary) 60%, var(--primary-dark) 100%) !important;
