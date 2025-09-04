@@ -1,6 +1,6 @@
 /* Edit Button Style */
 .edit-btn, .delete-btn {
-    min-width: 160px;
+    width: 180px;
     text-align: center;
 }
 .edit-btn {
