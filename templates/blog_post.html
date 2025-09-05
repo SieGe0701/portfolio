@@ -31,13 +31,17 @@
                     <form method="post" class="blog-form">
                         <label for="title">Title:</label>
                         <input type="text" id="title" name="title" value="{{ post.title }}" required class="input-field">
-                            <label for="short_desc">Short Description:</label>
-                            <input type="text" id="short_desc" name="short_desc" value="{{ post.short_desc }}" maxlength="200" class="input-field" placeholder="A line or two about this post..." required>
+                        <label for="short_desc">Short Description:</label>
+                        <input type="text" id="short_desc" name="short_desc" value="{{ post.short_desc }}" maxlength="200" class="input-field" placeholder="A line or two about this post..." required>
+                        <label for="tags">Tags (comma separated):</label>
+                        <input type="text" id="tags" name="tags" value="{{ post.tags }}" class="input-field" placeholder="e.g. python, flask, supabase">
                         <label for="content">Content (Markdown supported):</label>
                         <textarea id="content" name="content" rows="10" required class="input-field">{{ post.content }}</textarea>
                         <input type="hidden" name="save_edit" value="1">
-                        <button type="submit" class="btn-primary">Save Changes</button>
-                        <a href="/blog/{{ post.id }}" class="btn-primary" style="background:#888; color:#fff; margin-left:1rem;">Cancel</a>
+                        <div style="display: flex; gap: 1rem; margin-top: 1.2rem;">
+                            <button type="submit" class="btn-primary">Save Changes</button>
+                            <a href="/blog/{{ post.id }}" class="btn-primary" style="background: #888; color: #fff;">Cancel</a>
+                        </div>
                     </form>
                 {% else %}
                     <h1>{{ post.title }}</h1>
