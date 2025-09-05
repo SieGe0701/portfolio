@@ -120,7 +120,7 @@ def blog():
         # Use first line or up to 120 chars as preview
         content = post['content'].strip()
         first_line = content.split('\n', 1)[0]
-        preview = first_line if len(first_line) <= 120 else first_line[:120] + '...'
+        preview = post.get('short_desc', '') or (first_line if len(first_line) <= 120 else first_line[:117] + '...')
         previews.append({
             'id': post['id'],
             'title': post['title'],

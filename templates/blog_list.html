@@ -41,7 +41,7 @@
                 <a href="/blog/{{ post.id }}" class="card blog-preview-link">
                     <h2>{{ post.title }}</h2>
                     <p class="blog-date"><em>{{ post.date }}</em></p>
-                    <p>{{ post.short_desc }}</p>
+                    <p>{{ post.preview }}</p>
                     {% if post.tags %}
                         <div class="blog-tags">
                             {% for tag in post.tags.split(',') %}
