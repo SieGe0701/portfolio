@@ -113,14 +113,26 @@ def blog():
             content = request.form.get('content')
             add_post(title, content, datetime.now().strftime('%Y-%m-%d %H:%M'))
             return redirect(url_for('blog'))
+    query = request.args.get('q', '').strip()
+    tag_filter = request.args.get('tag', '').strip()
     posts = get_all_posts()
+    # Collect all tags for dropdown
+    all_tags = set()
+    for post in posts:
+        for tag in post.get('tags', '').split(','):
+            t = tag.strip()
+            if t:
+                all_tags.add(t)
+    # Filter by search query
+    if query:
+        posts = [p for p in posts if query.lower() in p['title'].lower() or query.lower() in p['content'].lower() or query.lower() in p.get('short_desc', '').lower() or query.lower() in p.get('tags', '').lower()]
+    # Filter by tag
+    if tag_filter:
+        posts = [p for p in posts if tag_filter.lower() in p.get('tags', '').lower()]
     import html
     previews = []
     for post in posts:
-        # Use first line or up to 120 chars as preview
-        content = post['content'].strip()
-        first_line = content.split('\n', 1)[0]
-        preview = post.get('short_desc', '') or (first_line if len(first_line) <= 120 else first_line[:117] + '...')
+        preview = post.get('short_desc', '')
         previews.append({
             'id': post['id'],
             'title': post['title'],
@@ -128,7 +140,7 @@ def blog():
             'tags': post.get('tags', ''),
             'preview': html.escape(preview)
         })
-    return render_template('blog_list.html', posts=previews, error=error, success=success)
+    return render_template('blog_list.html', posts=previews, error=error, success=success, all_tags=sorted(all_tags), query=query, tag_filter=tag_filter)
 
 
 # Individual blog post view and delete
