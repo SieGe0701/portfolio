@@ -65,19 +65,19 @@ else:
 # Remove init_db, assume tables are created in Supabase
 
 def get_all_posts():
-        res = supabase.table("blog_posts").select("id, title, content, date, tags").order("date", desc=True).execute()
-        rows = res.data if res.data else []
-        return [
-            {'id': row['id'], 'title': row['title'], 'content': row['content'], 'date': row['date'], 'tags': row.get('tags', '')}
-            for row in rows
-        ]
+    res = supabase.table("blog_posts").select("id, title, content, date, tags, short_desc").order("date", desc=True).execute()
+    rows = res.data if res.data else []
+    return [
+        {'id': row['id'], 'title': row['title'], 'content': row['content'], 'date': row['date'], 'tags': row.get('tags', ''), 'short_desc': row.get('short_desc', '')}
+        for row in rows
+    ]
 
 def get_post(post_id):
-        res = supabase.table("blog_posts").select("id, title, content, date, tags").eq("id", post_id).single().execute()
-        row = res.data if res.data else None
-        if row:
-            return {'id': row['id'], 'title': row['title'], 'content': row['content'], 'date': row['date'], 'tags': row.get('tags', '')}
-        return None
+    res = supabase.table("blog_posts").select("id, title, content, date, tags, short_desc").eq("id", post_id).single().execute()
+    row = res.data if res.data else None
+    if row:
+        return {'id': row['id'], 'title': row['title'], 'content': row['content'], 'date': row['date'], 'tags': row.get('tags', ''), 'short_desc': row.get('short_desc', '')}
+    return None
 
 def add_post(title, content, date):
         post_id = str(uuid.uuid4())
