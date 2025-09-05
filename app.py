@@ -147,12 +147,14 @@ def blog_post(post_id):
             # Enter edit mode
             edit_mode = True
         elif is_admin and request.form.get('save_edit') == '1':
-            new_title = request.form.get('title')
-            new_content = request.form.get('content')
-            if new_title and new_content:
-                supabase.table("blog_posts").update({"title": new_title, "content": new_content}).eq("id", post_id).execute()
+                new_title = request.form.get('title')
+                new_content = request.form.get('content')
+                new_tags = request.form.get('tags', '')
+                new_short_desc = request.form.get('short_desc', '')
+                if new_title and new_content:
+                    supabase.table("blog_posts").update({"title": new_title, "content": new_content, "tags": new_tags, "short_desc": new_short_desc}).eq("id", post_id).execute()
                 post = get_post(post_id)  # Refresh post
-            edit_mode = False
+                edit_mode = False
     # Render markdown to HTML for the post content
     if post:
         post['content_html'] = Markup(markdown.markdown(post['content'], extensions=['extra', 'codehilite']))

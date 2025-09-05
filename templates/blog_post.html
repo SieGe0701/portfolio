@@ -31,6 +31,8 @@
                     <form method="post" class="blog-form">
                         <label for="title">Title:</label>
                         <input type="text" id="title" name="title" value="{{ post.title }}" required class="input-field">
+                            <label for="short_desc">Short Description:</label>
+                            <input type="text" id="short_desc" name="short_desc" value="{{ post.short_desc }}" maxlength="200" class="input-field" placeholder="A line or two about this post..." required>
                         <label for="content">Content (Markdown supported):</label>
                         <textarea id="content" name="content" rows="10" required class="input-field">{{ post.content }}</textarea>
                         <input type="hidden" name="save_edit" value="1">
