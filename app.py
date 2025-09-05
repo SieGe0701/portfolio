@@ -65,24 +65,25 @@ else:
 # Remove init_db, assume tables are created in Supabase
 
 def get_all_posts():
-    res = supabase.table("blog_posts").select("id, title, content, date").order("date", desc=True).execute()
-    rows = res.data if res.data else []
-    return [
-        {'id': row['id'], 'title': row['title'], 'content': row['content'], 'date': row['date']}
-        for row in rows
-    ]
+        res = supabase.table("blog_posts").select("id, title, content, date, tags").order("date", desc=True).execute()
+        rows = res.data if res.data else []
+        return [
+            {'id': row['id'], 'title': row['title'], 'content': row['content'], 'date': row['date'], 'tags': row.get('tags', '')}
+            for row in rows
+        ]
 
 def get_post(post_id):
-    res = supabase.table("blog_posts").select("id, title, content, date").eq("id", post_id).single().execute()
-    row = res.data if res.data else None
-    if row:
-        return {'id': row['id'], 'title': row['title'], 'content': row['content'], 'date': row['date']}
-    return None
+        res = supabase.table("blog_posts").select("id, title, content, date, tags").eq("id", post_id).single().execute()
+        row = res.data if res.data else None
+        if row:
+            return {'id': row['id'], 'title': row['title'], 'content': row['content'], 'date': row['date'], 'tags': row.get('tags', '')}
+        return None
 
 def add_post(title, content, date):
-    post_id = str(uuid.uuid4())
-    supabase.table("blog_posts").insert({"id": post_id, "title": title, "content": content, "date": date}).execute()
-    return post_id
+        post_id = str(uuid.uuid4())
+        tags = request.form.get('tags', '')
+        supabase.table("blog_posts").insert({"id": post_id, "title": title, "content": content, "date": date, "tags": tags}).execute()
+        return post_id
 
 def delete_post(post_id):
     supabase.table("blog_posts").delete().eq("id", post_id).execute()
@@ -114,15 +115,19 @@ def blog():
             return redirect(url_for('blog'))
     posts = get_all_posts()
     import html
-    previews = [
-        {
+    previews = []
+    for post in posts:
+        # Use first line or up to 120 chars as preview
+        content = post['content'].strip()
+        first_line = content.split('\n', 1)[0]
+        preview = first_line if len(first_line) <= 120 else first_line[:120] + '...'
+        previews.append({
             'id': post['id'],
             'title': post['title'],
             'date': post['date'],
-            'preview': html.escape(post['content'][:200]) + ('...' if len(post['content']) > 200 else '')
-        }
-        for post in posts
-    ]
+            'tags': post.get('tags', ''),
+            'preview': html.escape(preview)
+        })
     return render_template('blog_list.html', posts=previews, error=error, success=success)
 
 
