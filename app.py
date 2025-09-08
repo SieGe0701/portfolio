@@ -133,6 +133,8 @@ def blog():
     previews = []
     for post in posts:
         preview = post.get('short_desc', '')
+        if preview is None:
+            preview = ""
         previews.append({
             'id': post['id'],
             'title': post['title'],
