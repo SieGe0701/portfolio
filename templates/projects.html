@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="/static/css/style.css">
 </head>
 <body>
-    <script src="static/js/Side_nav.js"></script>
+    <script src="/static/js/Side_nav.js"></script>
     <button class="nav-toggle">
         <span></span>
         <span></span>
@@ -16,7 +16,7 @@
     <nav>
         <div class="nav-links">
             <a href="/">Home</a>
-            <a href="about_me">About</a>
+            <a href="/about_me">About</a>
             <a href="/projects">Projects</a>
             <a href="/Work_Experience">Work Experience</a>
             <a href="/contact">Contact</a>
@@ -29,16 +29,13 @@
         <h1>My Projects</h1>
         <div class="grid">
             {% for repo in repos %}
-            <a href="{{ repo.html_url }}" class="project-card-link" target="_blank">
-                <div class="project-card">
-                    <h2>{{ repo.name }}</h2>
-                    <p>{{ repo.description if repo.description else "No description provided." }}</p>
-                    {% if repo.language %}
-                    <p><strong>Language:</strong> {{ repo.language }}</p>
-                    {% endif %}
-                    <p style="font-size:small;color:gray;">Last updated: {{ repo.updated_at[:10] }}</p>
-                </div>
-            </a>
+                <a href="{{ repo.html_url }}" class="project-card-link" target="_blank">
+                    <div class="project-card">
+                        <h2>{{ repo.name }}</h2>
+                        <p>{{ repo.description if repo.description else "No description provided." }}</p>
+                        <p class="project-updated" style="font-size: small; color: gray;">Last updated: {{ repo.updated_at[:10] }}</p>
+                    </div>
+                </a>
             {% endfor %}
         </div>
     </main>
