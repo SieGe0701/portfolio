@@ -180,7 +180,26 @@ def home():
 
 @app.route('/projects')
 def projects():
-    return render_template('projects.html')
+    import requests
+    github_username = "SieGe0701"
+    url = f"https://api.github.com/users/{github_username}/repos?type=public&sort=updated"
+    try:
+        response = requests.get(url, timeout=10)
+        repos = response.json() if response.status_code == 200 else []
+    except Exception:
+        repos = []
+    # Only keep relevant fields for template
+    repo_list = [
+        {
+            "name": repo["name"],
+            "html_url": repo["html_url"],
+            "description": repo["description"],
+            "language": repo["language"],
+            "updated_at": repo["updated_at"]
+        }
+        for repo in repos
+    ]
+    return render_template('projects.html', repos=repo_list)
 
 @app.route('/Work_Experience')
 def skills():
