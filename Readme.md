@@ -13,6 +13,6 @@ This is a personal portfolio website built using Flask, designed to showcase pro
 
 - **Backend**: Flask (Python)
 - **Frontend**: HTML, CSS
-- **Deployment**: Compatible with platforms like Azure,AWS etc.
+- **Deployment**: Compatible with platforms like Azure,AWS etc..
 
 
